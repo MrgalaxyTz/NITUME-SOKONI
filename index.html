@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NITUME SOKONI - Dashboard ya Kuagiza Mahitaji</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+/* ==================== RESET ==================== */
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
+body { background: #f1f8e9; color: #263238; min-height: 100vh; }
+
+/* ==================== HEADER ==================== */
+.header {
+    background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 50%, #388e3c 100%);
+    color: white;
+    padding: 16px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 22px rgba(27,94,32,0.45);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    flex-wrap: wrap;
+    gap: 12px;
+    border-bottom: 3px solid #ffc107;
+}
+.logo { display: flex; align-items: center; gap: 14px; }
+.logo i {
+    font-size: 30px;
+    color: #1b5e20;
+    background: #ffc107;
+    padding: 10px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(255,193,7,0.4);
+}
+.logo h1 { font-size: 22px; letter-spacing: 1.5px; font-weight: 700; }
+.logo small { display: block; font-size: 11px; opacity: 0.85; letter-spacing: 0.5px; color: #c8e6c9; }
+.user-info { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.badge {
+    background: #ffc107;
+    color: #1b5e20;
+    padding: 7px 16px;
+    border-radius: 20px;
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    box-shadow: 0 3px 10px rgba(255,193,7,0.4);
+}
+.badge.admin { background: #ff9800; color: white; box-shadow: 0 3px 10px rgba(255,152,0,0.5); }
+.btn-switch {
+    background: rgba(255,255,255,0.15);
+    border: 1.5px solid rgba(255,193,7,0.6);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13px;
+    transition: 0.3s;
+}
+.btn-switch:hover { background: #ffc107; color: #1b5e20; border-color: #ffc107; }
+
+/* ==================== CONTAINER ==================== */
+.container { max-width: 1280px; margin: 28px auto; padding: 0 24px; }
+.view { display: none; }
+.view.active { display: block; animation: fadeIn 0.4s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ==================== VIEW HEADER ==================== */
+.view-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+.view-header h2 { color: #1b5e20; font-size: 24px; font-weight: 700; }
+.view-header h2 i { color: #ff9800; margin-right: 6px; }
+.view-header p.subtitle { color: #689f38; font-size: 13px; margin-top: 4px; font-weight: 500; }
+
+/* ==================== SEARCH ==================== */
+.search-bar {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    background: white;
+    padding: 10px 16px;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(46,125,50,0.1);
+    border: 2px solid #c8e6c9;
+    transition: 0.3s;
+}
+.search-bar:focus-within { border-color: #43a047; box-shadow: 0 3px 16px rgba(67,160,71,0.2); }
+.search-bar i { color: #43a047; }
+.search-bar input {
+    border: none;
+    outline: none;
+    font-size: 14px;
+    width: 220px;
+    padding: 4px;
+    background: transparent;
+}
+
+/* ==================== CATEGORY TABS ==================== */
+.cat-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+}
+.cat-tab {
+    background: white;
+    border: 2px solid #c8e6c9;
+    padding: 10px 20px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13px;
+    color: #2e7d32;
+    transition: 0.3s;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+.cat-tab:hover { border-color: #43a047; background: #f1f8e9; transform: translateY(-2px); }
+.cat-tab.active {
+    background: linear-gradient(135deg, #2e7d32, #1b5e20);
+    color: white;
+    border-color: #1b5e20;
+    box-shadow: 0 5px 15px rgba(46,125,50,0.4);
+}
+.cat-tab i { margin-right: 6px; }
+.cat-tab .count {
+    background: rgba(255,255,255,0.4);
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    margin-left: 6px;
+    font-weight: 800;
+}
+.cat-tab.active .count { background: #ffc107; color: #1b5e20; }
+
+/* ==================== PRODUCTS GRID ==================== */
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 18px;
+    margin-bottom: 32px;
+}
+.product-card {
+    background: white;
+    border-radius: 14px;
+    padding: 18px 14px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+    transition: 0.3s;
+    display: flex;
+    flex-direction: column;
+    border: 1.5px solid transparent;
+    position: relative;
+    overflow: hidden;
+}
+.product-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 28px rgba(46,125,50,0.22);
+    border-color: #a5d6a7;
+}
+.product-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #2e7d32, #ffc107);
+}
+.product-icon { font-size: 46px; text-align: center; margin: 6px 0 10px; }
+.product-card h4 {
+    font-size: 15px;
+    color: #1b5e20;
+    margin-bottom: 6px;
+    text-align: center;
+    font-weight: 700;
+}
+.product-card .price {
+    color: #2e7d32;
+    font-weight: 800;
+    font-size: 16px;
+    text-align: center;
+    margin-bottom: 4px;
+}
+.product-card .unit {
+    font-size: 11px;
+    color: #81c784;
+    text-align: center;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.product-card .category-tag {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    font-size: 10px;
+    background: #fff8e1;
+    color: #ef6c00;
+    padding: 3px 9px;
+    border-radius: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: 1px solid #ffe082;
+}
+.add-btn {
+    background: linear-gradient(135deg, #43a047, #2e7d32);
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 9px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 13px;
+    transition: 0.3s;
+    margin-top: auto;
+}
+.add-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #2e7d32, #1b5e20);
+    transform: scale(1.03);
+    box-shadow: 0 5px 15px rgba(46,125,50,0.4);
+}
+.add-btn:disabled { background: #c8e6c9; color: #2e7d32; cursor: not-allowed; }
+
+/* ==================== CART ==================== */
+.cart-section {
+    background: white;
+    padding: 24px;
+    border-radius: 16px;
+    box-shadow: 0 4px 18px rgba(46,125,50,0.08);
+    border: 2px solid #e8f5e9;
+    position: relative;
+}
+.cart-section::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #2e7d32, #66bb6a, #ffc107);
+    border-radius: 16px 16px 0 0;
+}
+.cart-section h3 {
+    color: #1b5e20;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #c8e6c9;
+    font-size: 18px;
+}
+.cart-list { list-style: none; max-height: 320px; overflow-y: auto; }
+.cart-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #f1f8e9;
+    gap: 10px;
+}
+.cart-list li:last-child { border-bottom: none; }
+.cart-list .item-info { display: flex; flex-direction: column; gap: 3px; flex: 1; }
+.cart-list .item-info span { font-size: 14px; color: #1b5e20; }
+.cart-list .item-info small { color: #689f38; font-size: 12px; }
+.cart-list .qty-controls { display: flex; gap: 6px; align-items: center; }
+.qty-btn {
+    background: #43a047;
+    color: white;
+    border: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 15px;
+    transition: 0.2s;
+}
+.qty-btn:hover { background: #1b5e20; transform: scale(1.1); }
+.qty-num {
+    font-weight: 800;
+    min-width: 26px;
+    text-align: center;
+    color: #1b5e20;
+    font-size: 15px;
+}
+.remove-btn {
+    background: #ef5350;
+    color: white;
+    border: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    transition: 0.2s;
+}
+.remove-btn:hover { background: #c62828; transform: rotate(90deg); }
+.cart-total {
+    text-align: right;
+    font-size: 18px;
+    margin: 18px 0 14px;
+    color: #1b5e20;
+    font-weight: 800;
+    padding-top: 14px;
+    border-top: 2px dashed #c8e6c9;
+}
+.btn-primary {
+    background: linear-gradient(135deg, #ff9800, #ef6c00);
+    color: white;
+    border: none;
+    padding: 14px 24px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 800;
+    font-size: 15px;
+    width: 100%;
+    transition: 0.3s;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 12px rgba(255,152,0,0.3);
+}
+.btn-primary:hover:not(:disabled) {
+    background: linear-gradient(135deg, #ef6c00, #e65100);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(255,152,0,0.5);
+}
+.btn-primary:disabled { background: #cfd8dc; cursor: not-allowed; box-shadow: none; }
+.btn-secondary {
+    background: #eceff1;
+    color: #455a64;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 700;
+    transition: 0.3s;
+}
+.btn-secondary:hover { background: #cfd8dc; }
+
+/* ==================== ADMIN ==================== */
+.stats { display: flex; gap: 12px; flex-wrap: wrap; }
+.stat-box {
+    background: white;
+    padding: 12px 20px;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+    font-size: 13px;
+    color: #546e7a;
+    font-weight: 600;
+    border-left: 5px solid #43a047;
+}
+.stat-box b { color: #1b5e20; font-size: 20px; display: block; margin-top: 2px; }
+.stat-box.pending { border-left-color: #ff9800; }
+.stat-box.pending b { color: #e65100; }
+.stat-box.completed { border-left-color: #2e7d32; }
+.stat-box.completed b { color: #1b5e20; }
+
+.orders-list { display: grid; gap: 18px; }
+.order-card {
+    background: white;
+    border-radius: 14px;
+    padding: 22px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+    border-left: 6px solid #ffc107;
+    transition: 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+.order-card::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 60px; height: 60px;
+    background: radial-gradient(circle, rgba(255,193,7,0.15), transparent 70%);
+    border-radius: 50%;
+}
+.order-card:hover { box-shadow: 0 8px 25px rgba(0,0,0,0.1); transform: translateY(-3px); }
+.order-card.completed { border-left-color: #2e7d32; background: #f9fdf9; }
+.order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.order-id { font-weight: 800; color: #1b5e20; font-size: 16px; }
+.order-status {
+    padding: 5px 14px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 800;
+    background: #fff8e1;
+    color: #ef6c00;
+    letter-spacing: 0.3px;
+    border: 1px solid #ffe082;
+}
+.order-card.completed .order-status { background: #e8f5e9; color: #1b5e20; border-color: #a5d6a7; }
+.order-meta {
+    background: #f1f8e9;
+    padding: 14px;
+    border-radius: 10px;
+    margin-bottom: 14px;
+    font-size: 13px;
+    line-height: 1.9;
+    color: #33691e;
+    border-left: 3px solid #66bb6a;
+}
+.order-meta p { display: flex; align-items: flex-start; gap: 8px; }
+.order-meta i { color: #2e7d32; width: 16px; margin-top: 3px; }
+.order-items {
+    list-style: none;
+    background: #fafbfc;
+    padding: 14px;
+    border-radius: 10px;
+    margin-bottom: 14px;
+    border: 1px solid #e8f5e9;
+}
+.order-items li {
+    padding: 7px 0;
+    font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px dashed #c8e6c9;
+}
+.order-items li:last-child { border-bottom: none; }
+.order-total {
+    text-align: right;
+    font-size: 17px;
+    font-weight: 800;
+    color: #1b5e20;
+    margin-bottom: 14px;
+    padding-top: 8px;
+    border-top: 2px solid #c8e6c9;
+}
+.actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.actions button {
+    flex: 1;
+    padding: 11px;
+    border: none;
+    border-radius: 9px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 13px;
+    transition: 0.3s;
+    min-width: 140px;
+}
+.btn-deliver { background: linear-gradient(135deg, #43a047, #2e7d32); color: white; box-shadow: 0 3px 10px rgba(46,125,50,0.3); }
+.btn-deliver:hover { background: linear-gradient(135deg, #2e7d32, #1b5e20); transform: translateY(-2px); }
+.btn-delete { background: #ffebee; color: #c62828; }
+.btn-delete:hover { background: #ffcdd2; }
+
+/* ==================== EMPTY STATE ==================== */
+.empty-state { text-align: center; padding: 60px 20px; color: #81c784; }
+.empty-state i { font-size: 64px; margin-bottom: 18px; color: #c8e6c9; }
+.empty-state p { font-size: 15px; }
+.empty-state h4 { color: #2e7d32; margin-bottom: 6px; font-size: 17px; }
+
+/* ==================== MODAL ==================== */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(27,94,32,0.6);
+    backdrop-filter: blur(4px);
+    justify-content: center;
+    align-items: center;
+    z-index: 200;
+    padding: 20px;
+}
+.modal.active { display: flex; }
+.modal-content {
+    background: white;
+    border-radius: 18px;
+    padding: 32px;
+    max-width: 580px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    animation: slideUp 0.35s ease;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.35);
+    border-top: 5px solid #ffc107;
+}
+@keyframes slideUp { from { transform: translateY(40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.close {
+    position: absolute;
+    top: 16px; right: 22px;
+    font-size: 28px;
+    cursor: pointer;
+    color: #81c784;
+    line-height: 1;
+    transition: 0.3s;
+}
+.close:hover { color: #1b5e20; transform: rotate(90deg); }
+.modal-content h3 {
+    color: #1b5e20;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #c8e6c9;
+    font-size: 20px;
+}
+.modal-content h4 {
+    color: #2e7d32;
+    margin: 18px 0 12px;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.modal-content h4 i { color: #ff9800; }
+.form-group { margin-bottom: 14px; }
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    font-size: 13px;
+    color: #33691e;
+}
+.form-group label .req { color: #e53935; }
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 11px 14px;
+    border: 2px solid #c8e6c9;
+    border-radius: 9px;
+    outline: none;
+    font-size: 14px;
+    transition: 0.3s;
+    background: #f9fdf9;
+    font-family: inherit;
+}
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    border-color: #43a047;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(67,160,71,0.15);
+}
+.modal-summary {
+    background: #f1f8e9;
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    border-left: 4px solid #43a047;
+}
+.modal-summary ul { list-style: none; max-height: 140px; overflow-y: auto; }
+.modal-summary li {
+    font-size: 13px;
+    padding: 5px 0;
+    border-bottom: 1px dashed #c8e6c9;
+    display: flex;
+    justify-content: space-between;
+    color: #33691e;
+}
+.modal-summary li:last-child { border-bottom: none; }
+.modal-actions { display: flex; gap: 10px; margin-top: 22px; }
+.modal-actions .btn-primary,
+.modal-actions .btn-secondary { flex: 1; }
+
+/* ==================== TOAST ==================== */
+.toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: #263238;
+    color: white;
+    padding: 15px 24px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    opacity: 0;
+    transform: translateY(30px);
+    transition: 0.4s;
+    z-index: 300;
+    font-size: 14px;
+    font-weight: 600;
+    max-width: 340px;
+}
+.toast.show { opacity: 1; transform: translateY(0); }
+.toast.success { background: linear-gradient(135deg, #43a047, #2e7d32); }
+.toast.error { background: linear-gradient(135deg, #e53935, #c62828); }
+.toast.info { background: linear-gradient(135deg, #ff9800, #ef6c00); }
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 768px) {
+    .header { padding: 12px 16px; }
+    .logo h1 { font-size: 17px; }
+    .logo i { font-size: 22px; padding: 8px; }
+    .container { padding: 0 14px; margin: 18px auto; }
+    .view-header { flex-direction: column; align-items: stretch; }
+    .search-bar { width: 100%; }
+    .search-bar input { width: 100%; flex: 1; }
+    .products-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+    .product-icon { font-size: 38px; }
+    .stats { width: 100%; }
+    .stat-box { flex: 1; }
+    .modal-content { padding: 22px; }
+    .toast { left: 16px; right: 16px; bottom: 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ================= HEADER ================= -->
+<header class="header">
+    <div class="logo">
+        <i class="fas fa-shopping-basket"></i>
+        <div>
+            <h1>NITUME SOKONI</h1>
+            <small>Mahitaji yako, sisi tunakuletea</small>
+        </div>
+    </div>
+    <div class="user-info">
+        <span id="userRoleBadge" class="badge">Mteja</span>
+        <button id="switchRoleBtn" class="btn-switch">
+            <i class="fas fa-exchange-alt"></i> Badili Role
+        </button>
+    </div>
+</header>
+
+<!-- ================= MAIN ================= -->
+<main class="container">
+
+    <!-- ========== CLIENT VIEW ========== -->
+    <section id="clientView" class="view active">
+        <div class="view-header">
+            <div>
+                <h2><i class="fas fa-store"></i> Bidhaa Zinazopatikana</h2>
+                <p class="subtitle">Chagua mahitaji yako kisha tuma oda — sisi tutakuletea</p>
+            </div>
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Tafuta bidhaa...">
+            </div>
+        </div>
+
+        <!-- Category Tabs -->
+        <div class="cat-tabs" id="catTabs"></div>
+
+        <!-- Section Title -->
+        <h3 id="sectionTitle" style="color:#1b5e20;margin-bottom:14px;font-size:18px;"></h3>
+
+        <div id="productsGrid" class="products-grid"></div>
+
+        <!-- CART -->
+        <div class="cart-section">
+            <h3><i class="fas fa-shopping-cart"></i> Oda Yako (<span id="cartCount">0</span> bidhaa)</h3>
+            <ul id="cartList" class="cart-list"></ul>
+            <div class="cart-total">Jumla: TZS <span id="cartTotal">0</span></div>
+            <button id="confirmOrderBtn" class="btn-primary" disabled>
+                <i class="fas fa-check-circle"></i> Thibitisha Oda
+            </button>
+        </div>
+    </section>
+
+    <!-- ========== ADMIN VIEW ========== -->
+    <section id="adminView" class="view">
+        <div class="view-header">
+            <div>
+                <h2><i class="fas fa-clipboard-list"></i> Oda Zinazoingia</h2>
+                <p class="subtitle">Simamia oda zote kutoka kwa wateja</p>
+            </div>
+            <div class="stats">
+                <div class="stat-box">Jumla<b id="totalOrders">0</b></div>
+                <div class="stat-box pending">Mpya<b id="pendingOrders">0</b></div>
+                <div class="stat-box completed">Zilizokamilika<b id="completedOrders">0</b></div>
+            </div>
+        </div>
+        <div id="ordersList" class="orders-list"></div>
+    </section>
+
+</main>
+
+<!-- ================= MODAL ================= -->
+<div id="orderModal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="closeModal">&times;</span>
+        <h3><i class="fas fa-receipt"></i> Thibitisha Oda Yako</h3>
+        <div id="modalBody"></div>
+        <div class="modal-actions">
+            <button id="sendOrderBtn" class="btn-primary">
+                <i class="fas fa-paper-plane"></i> Tuma Oda
+            </button>
+            <button id="cancelOrderBtn" class="btn-secondary">Ghairi</button>
+        </div>
+    </div>
+</div>
+
+<!-- ================= TOAST ================= -->
+<div id="toast" class="toast"></div>
+
+<script>
+/* =========================================================
+   NITUME SOKONI - Bidhaa Zote na Logic (Green Theme)
+   ========================================================= */
+
+const CATEGORIES = [
+    { key: "all",         name: "Zote",              icon: "fa-th" },
+    { key: "sokoni",      name: "Sokoni",            icon: "fa-carrot" },
+    { key: "matunda",     name: "Matunda",           icon: "fa-apple-alt" },
+    { key: "mboga",       name: "Mboga & Viungo",    icon: "fa-leaf" },
+    { key: "nafaka",      name: "Nafaka & Mchele",   icon: "fa-seedling" },
+    { key: "supermarket", name: "Supermarket",       icon: "fa-shopping-cart" }
+];
+
+const PRODUCTS = [
+    /* ===== SOKONI ===== */
+    { id: 1,  name: "Nyanya",              price: 2000, unit: "kg",     category: "sokoni", icon: "🍅" },
+    { id: 2,  name: "Viazi",               price: 1500, unit: "kg",     category: "sokoni", icon: "🥔" },
+    { id: 3,  name: "Vitunguu",            price: 2500, unit: "kg",     category: "sokoni", icon: "🧅" },
+    { id: 4,  name: "Mahindi Mabichi",     price: 1000, unit: "punje",  category: "sokoni", icon: "🌽" },
+    { id: 5,  name: "Ndizi",               price: 3000, unit: "mkungu", category: "sokoni", icon: "🍌" },
+    { id: 6,  name: "Karoti",              price: 1800, unit: "kg",     category: "sokoni", icon: "🥕" },
+    { id: 7,  name: "Hoho",                price: 2200, unit: "kg",     category: "sokoni", icon: "🌶️" },
+    { id: 8,  name: "Magimbi",             price: 2500, unit: "kg",     category: "sokoni", icon: "🍠" },
+    { id: 9,  name: "Tango",               price: 1200, unit: "kimoja", category: "sokoni", icon: "🥒" },
+    { id: 10, name: "Biringanya",          price: 1500, unit: "kg",     category: "sokoni", icon: "🍆" },
+    { id: 11, name: "Swaumu",              price: 3000, unit: "kg",     category: "sokoni", icon: "🧄" },
+    { id: 12, name: "Tangawizi",           price: 4000, unit: "kg",     category: "sokoni", icon: "🫚" },
+    { id: 13, name: "Pilipili Hoho",       price: 2500, unit: "kg",     category: "sokoni", icon: "🌶️" },
+    { id: 14, name: "Pilipili Kali",       price: 3500, unit: "kg",     category: "sokoni", icon: "🌶️" },
+    { id: 15, name: "Mihogo",              price: 1500, unit: "kg",     category: "sokoni", icon: "🍠" },
+
+    /* ===== MATUNDA ===== */
+    { id: 20, name: "Maembe",              price: 2500, unit: "kg",     category: "matunda", icon: "🥭" },
+    { id: 21, name: "Machungwa",           price: 2000, unit: "kg",     category: "matunda", icon: "🍊" },
+    { id: 22, name: "Nanasi",              price: 3500, unit: "kimoja", category: "matunda", icon: "🍍" },
+    { id: 23, name: "Papai",               price: 3500, unit: "kimoja", category: "matunda", icon: "🍈" },
+    { id: 24, name: "Parachichi",          price: 3000, unit: "kimoja", category: "matunda", icon: "🥑" },
+    { id: 25, name: "Matikiti Maji",       price: 5000, unit: "kimoja", category: "matunda", icon: "🍉" },
+    { id: 26, name: "Passion",             price: 4000, unit: "kg",     category: "matunda", icon: "🍈" },
+    { id: 27, name: "Ndizi Matunda",       price: 3000, unit: "mkungu", category: "matunda", icon: "🍌" },
+    { id: 28, name: "Tufaha",              price: 5000, unit: "kg",     category: "matunda", icon: "🍎" },
+    { id: 29, name: "Zabibu",              price: 6000, unit: "kg",     category: "matunda", icon: "🍇" },
+    { id: 30, name: "Limau",               price: 2000, unit: "kg",     category: "matunda", icon: "🍋" },
+    { id: 31, name: "Strawberry",          price: 8000, unit: "kikapu", category: "matunda", icon: "🍓" },
+    { id: 32, name: "Pear",                price: 5500, unit: "kg",     category: "matunda", icon: "🍐" },
+    { id: 33, name: "Peach",               price: 6500, unit: "kg",     category: "matunda", icon: "🍑" },
+    { id: 34, name: "Cherry",              price: 9000, unit: "kikapu", category: "matunda", icon: "🍒" },
+    { id: 35, name: "Kiwi",                price: 7000, unit: "kg",     category: "matunda", icon: "🥝" },
+    { id: 36, name: "Fenesi",              price: 4000, unit: "kimoja", category: "matunda", icon: "🍈" },
+    { id: 37, name: "Komamanga",           price: 3500, unit: "kimoja", category: "matunda", icon: "🍎" },
+    { id: 38, name: "Embe Dodo",           price: 3000, unit: "kg",     category: "matunda", icon: "🥭" },
+
+    /* ===== MBOGA & VIUNGO ===== */
+    { id: 40, name: "Mchicha",             price: 500,  unit: "fundo",  category: "mboga", icon: "🥬" },
+    { id: 41, name: "Sukuma Wiki",         price: 500,  unit: "fundo",  category: "mboga", icon: "🥬" },
+    { id: 42, name: "Kabichi",             price: 1500, unit: "kimoja", category: "mboga", icon: "🥬" },
+    { id: 43, name: "Spinach",             price: 800,  unit: "fundo",  category: "mboga", icon: "🥬" },
+    { id: 44, name: "Kale (Sukuma)",       price: 600,  unit: "fundo",  category: "mboga", icon: "🥬" },
+    { id: 45, name: "Broccoli",            price: 3500, unit: "kg",     category: "mboga", icon: "🥦" },
+    { id: 46, name: "Cauliflower",         price: 3000, unit: "kg",     category: "mboga", icon: "🥦" },
+    { id: 47, name: "Karoti Ndogo",        price: 2000, unit: "kg",     category: "mboga", icon: "🥕" },
+    { id: 48, name: "Beetroot",            price: 1800, unit: "kg",     category: "mboga", icon: "🍠" },
+    { id: 49, name: "Figili",              price: 1500, unit: "kg",     category: "mboga", icon: "🥬" },
+    { id: 50, name: "Tango la Kijani",     price: 1200, unit: "kimoja", category: "mboga", icon: "🥒" },
+    { id: 51, name: "Vitunguu saumu",      price: 3200, unit: "kg",     category: "mboga", icon: "🧄" },
+    { id: 52, name: "Tangawizi Safi",      price: 4200, unit: "kg",     category: "mboga", icon: "🫚" },
+    { id: 53, name: "Hiliki",              price: 1500, unit: "pakiti", category: "mboga", icon: "🌿" },
+    { id: 54, name: "Mdalasini",           price: 2000, unit: "pakiti", category: "mboga", icon: "🌿" },
+    { id: 55, name: "Karafuu",             price: 5000, unit: "pakiti", category: "mboga", icon: "🌿" },
+    { id: 56, name: "Iliki",               price: 3000, unit: "pakiti", category: "mboga", icon: "🌿" },
+    { id: 57, name: "Bizari",              price: 2500, unit: "pakiti", category: "mboga", icon: "🌿" },
+    { id: 58, name: "Manjano",             price: 2200, unit: "pakiti", category: "mboga", icon: "🌿" },
+    { id: 59, name: "Rosemary",            price: 1800, unit: "pakiti", category: "mboga", icon: "🌿" },
+    { id: 60, name: "Basil",               price: 1800, unit: "pakiti", category: "mboga", icon: "🌿" },
+    { id: 61, name: "Oregano",             price: 1800, unit: "pakiti", category: "mboga", icon: "🌿" },
+
+    /* ===== NAFKA & MCHELE ===== */
+    { id: 70, name: "Mchele",              price: 3500, unit: "kg",     category: "nafaka", icon: "🍚" },
+    { id: 71, name: "Mchele wa Kupikwa",   price: 4000, unit: "kg",     category: "nafaka", icon: "🍚" },
+    { id: 72, name: "Mahindi ya Kukoboa",  price: 2000, unit: "kg",     category: "nafaka", icon: "🌾" },
+    { id: 73, name: "Unga wa Sembe",       price: 2500, unit: "kg",     category: "nafaka", icon: "🌾" },
+    { id: 74, name: "Unga wa Ngano",       price: 3000, unit: "kg",     category: "nafaka", icon: "🌾" },
+    { id: 75, name: "Unga wa Mchele",      price: 3200, unit: "kg",     category: "nafaka", icon: "🌾" },
+    { id: 76, name: "Maharage",            price: 4000, unit: "kg",     category: "nafaka", icon: "🫘" },
+    { id: 77, name: "Kunde",               price: 3500, unit: "kg",     category: "nafaka", icon: "🫘" },
+    { id: 78, name: "Choroko",             price: 4500, unit: "kg",     category: "nafaka", icon: "🫘" },
+    { id: 79, name: "Njegere",             price: 5000, unit: "kg",     category: "nafaka", icon: "🫘" },
+    { id: 80, name: "Dengu",               price: 3800, unit: "kg",     category: "nafaka", icon: "🫘" },
+    { id: 81, name: "Karanga",             price: 6000, unit: "kg",     category: "nafaka", icon: "🥜" },
+    { id: 82, name: "Ufuta",               price: 5500, unit: "kg",     category: "nafaka", icon: "🌰" },
+    { id: 83, name: "Alizeti",             price: 5000, unit: "kg",     category: "nafaka", icon: "🌻" },
+    { id: 84, name: "Mbaazi",              price: 4200, unit: "kg",     category: "nafaka", icon: "🫘" },
+
+    /* ===== SUPERMARKET ===== */
+    { id: 90,  name: "Maziwa ya Pakiti",   price: 2500, unit: "lita",     category: "supermarket", icon: "🥛" },
+    { id: 91,  name: "Mkate",              price: 2000, unit: "kimoja",   category: "supermarket", icon: "🍞" },
+    { id: 92,  name: "Mayai",              price: 6000, unit: "tray",     category: "supermarket", icon: "🥚" },
+    { id: 93,  name: "Siagi",              price: 5500, unit: "pakiti",   category: "supermarket", icon: "🧈" },
+    { id: 94,  name: "Jibini",             price: 8500, unit: "pakiti",   category: "supermarket", icon: "🧀" },
+    { id: 95,  name: "Yogurt",             price: 3500, unit: "pakiti",   category: "supermarket", icon: "🥛" },
+    { id: 96,  name: "Juisi ya Matunda",   price: 4500, unit: "lita",     category: "supermarket", icon: "🧃" },
+    { id: 97,  name: "Biskuti",            price: 1500, unit: "pakiti",   category: "supermarket", icon: "🍪" },
+    { id: 98,  name: "Chocolate",          price: 4000, unit: "bar",      category: "supermarket", icon: "🍫" },
+    { id: 99,  name: "Crisps",             price: 2500, unit: "pakiti",   category: "supermarket", icon: "🍟" },
+    { id: 100, name: "Pasta",              price: 2800, unit: "pakiti",   category: "supermarket", icon: "🍝" },
+    { id: 101, name: "Spaghetti",          price: 2600, unit: "pakiti",   category: "supermarket", icon: "🍝" },
+    { id: 102, name: "Mafuta ya Kupikia",  price: 7000, unit: "lita",     category: "supermarket", icon: "🛢️" },
+    { id: 103, name: "Mafuta ya Nazi",     price: 6500, unit: "lita",     category: "supermarket", icon: "🥥" },
+    { id: 104, name: "Sukari",             price: 3000, unit: "kg",       category: "supermarket", icon: "🍬" },
+    { id: 105, name: "Chumvi",             price: 1000, unit: "pakiti",   category: "supermarket", icon: "🧂" },
+    { id: 106, name: "Chai Majani",        price: 4000, unit: "pakiti",   category: "supermarket", icon: "🍵" },
+    { id: 107, name: "Kahawa",             price: 6500, unit: "pakiti",   category: "supermarket", icon: "☕" },
+    { id: 108, name: "Soda",               price: 1500, unit: "chupa",    category: "supermarket", icon: "🥤" },
+    { id: 109, name: "Maji ya Chupa",      price: 1000, unit: "chupa",    category: "supermarket", icon: "💧" },
+    { id: 110, name: "Sabuni ya Kufulia",  price: 3500, unit: "kipande",  category: "supermarket", icon: "🧼" },
+    { id: 111, name: "Sabuni ya Mwili",    price: 3500, unit: "kipande",  category: "supermarket", icon: "🧴" },
+    { id: 112, name: "Shampoo",            price: 5500, unit: "chupa",    category: "supermarket", icon: "🧴" },
+    { id: 113, name: "Dawa ya Meno",       price: 3500, unit: "tube",     category: "supermarket", icon: "🪥" },
+    { id: 114, name: "Brush ya Meno",      price: 2000, unit: "kimoja",   category: "supermarket", icon: "🪥" },
+    { id: 115, name: "Tishu",              price: 2500, unit: "pakiti",   category: "supermarket", icon: "🧻" },
+    { id: 116, name: "Karatasi ya Choo",   price: 1500, unit: "roll",     category: "supermarket", icon: "🧻" },
+    { id: 117, name: "Pampers",            price: 15000,unit: "pakiti",   category: "supermarket", icon: "👶" },
+    { id: 118, name: "Mafuta ya Nywele",   price: 4500, unit: "chupa",    category: "supermarket", icon: "💆" },
+    { id: 119, name: "Lotion",             price: 5000, unit: "chupa",    category: "supermarket", icon: "🧴" },
+    { id: 120, name: "Viungo vya Supu",    price: 1500, unit: "pakiti",   category: "supermarket", icon: "🍲" }
+];
+
+/* ==================== STATE ==================== */
+let cart = [];
+let orders = JSON.parse(localStorage.getItem("nitumeOrders") || "[]");
+let currentRole = "client";
+let currentCategory = "all";
+let currentOrderDraft = null;
+
+/* ==================== DOM ELEMENTS ==================== */
+const productsGrid    = document.getElementById("productsGrid");
+const cartList        = document.getElementById("cartList");
+const cartCount       = document.getElementById("cartCount");
+const cartTotal       = document.getElementById("cartTotal");
+const confirmOrderBtn = document.getElementById("confirmOrderBtn");
+const searchInput     = document.getElementById("searchInput");
+const catTabs         = document.getElementById("catTabs");
+const sectionTitle    = document.getElementById("sectionTitle");
+const clientView      = document.getElementById("clientView");
+const adminView       = document.getElementById("adminView");
+const ordersList      = document.getElementById("ordersList");
+const userRoleBadge   = document.getElementById("userRoleBadge");
+const switchRoleBtn   = document.getElementById("switchRoleBtn");
+const orderModal      = document.getElementById("orderModal");
+const modalBody       = document.getElementById("modalBody");
+const sendOrderBtn    = document.getElementById("sendOrderBtn");
+const cancelOrderBtn  = document.getElementById("cancelOrderBtn");
+const closeModalBtn   = document.getElementById("closeModal");
+const toast           = document.getElementById("toast");
+
+/* ==================== INIT ==================== */
+document.addEventListener("DOMContentLoaded", () => {
+    renderCatTabs();
+    renderProducts();
+    renderCart();
+    renderOrders();
+    updateStats();
+
+    searchInput.addEventListener("input", renderProducts);
+    confirmOrderBtn.addEventListener("click", openOrderModal);
+    sendOrderBtn.addEventListener("click", submitOrder);
+    cancelOrderBtn.addEventListener("click", closeModal);
+    closeModalBtn.addEventListener("click", closeModal);
+    switchRoleBtn.addEventListener("click", switchRole);
+    window.addEventListener("click", (e) => { if (e.target === orderModal) closeModal(); });
+
+    console.log("✅ NITUME SOKONI (Green Theme) — Bidhaa:", PRODUCTS.length);
+});
+
+/* ==================== CATEGORY TABS ==================== */
+function renderCatTabs() {
+    catTabs.innerHTML = CATEGORIES.map(c => {
+        const count = c.key === "all"
+            ? PRODUCTS.length
+            : PRODUCTS.filter(p => p.category === c.key).length;
+        return `
+        <button class="cat-tab ${c.key === currentCategory ? 'active' : ''}" data-cat="${c.key}">
+            <i class="fas ${c.icon}"></i> ${c.name}
+            <span class="count">${count}</span>
+        </button>`;
+    }).join("");
+
+    catTabs.querySelectorAll(".cat-tab").forEach(tab => {
+        tab.addEventListener("click", () => {
+            currentCategory = tab.dataset.cat;
+            searchInput.value = "";
+            renderCatTabs();
+            renderProducts();
+        });
+    });
+}
+
+/* ==================== RENDER PRODUCTS ==================== */
+function renderProducts() {
+    const search = searchInput.value.toLowerCase().trim();
+
+    let filtered = PRODUCTS.filter(p => {
+        const matchCat = currentCategory === "all" || p.category === currentCategory;
+        const matchSearch = p.name.toLowerCase().includes(search);
+        return matchCat && matchSearch;
+    });
+
+    const catName = CATEGORIES.find(c => c.key === currentCategory)?.name || "Zote";
+    sectionTitle.textContent = `📋 ${catName} (${filtered.length} bidhaa)`;
+
+    if (filtered.length === 0) {
+        productsGrid.innerHTML = `
+            <div class="empty-state" style="grid-column:1/-1">
+                <i class="fas fa-search"></i>
+                <h4>Hakuna bidhaa iliyopatikana</h4>
+                <p>Jaribu kutafuta kwa jina lingine</p>
+            </div>`;
+        return;
+    }
+
+    productsGrid.innerHTML = filtered.map(p => {
+        const inCart = cart.find(c => c.id === p.id);
+        const catName = CATEGORIES.find(c => c.key === p.category)?.name || p.category;
+        return `
+        <div class="product-card">
+            <span class="category-tag">${catName}</span>
+            <div class="product-icon">${p.icon}</div>
+            <h4>${p.name}</h4>
+            <div class="price">TZS ${p.price.toLocaleString()}</div>
+            <div class="unit">kwa ${p.unit}</div>
+            <button class="add-btn" onclick="addToCart(${p.id})" ${inCart ? "disabled" : ""}>
+                ${inCart ? '<i class="fas fa-check"></i> Imeongezwa' : '<i class="fas fa-plus"></i> Ongeza'}
+            </button>
+        </div>`;
+    }).join("");
+}
+
+/* ==================== CART ==================== */
+function addToCart(id) {
+    const product = PRODUCTS.find(p => p.id === id);
+    if (!product) return;
+
+    if (cart.find(c => c.id === id)) {
+        showToast("Bidhaa hii ipo tayari kwenye oda yako", "info");
+        return;
+    }
+
+    cart.push({ ...product, qty: 1 });
+    renderCart();
+    renderProducts();
+    showToast(`${product.name} imeongezwa kwenye oda`, "success");
+}
+
+function removeFromCart(id) {
+    cart = cart.filter(c => c.id !== id);
+    renderCart();
+    renderProducts();
+    showToast("Bidhaa imeondolewa", "info");
+}
+
+function changeQty(id, delta) {
+    const item = cart.find(c => c.id === id);
+    if (!item) return;
+    item.qty += delta;
+    if (item.qty < 1) item.qty = 1;
+    renderCart();
+}
+
+function renderCart() {
+    cartCount.textContent = cart.length;
+
+    if (cart.length === 0) {
+        cartList.innerHTML = `<li style="justify-content:center;color:#81c784;padding:24px 0;border:none">
+            <i class="fas fa-shopping-basket" style="font-size:32px;margin-right:10px;opacity:0.5"></i>
+            Oda yako ni tupu. Chagua bidhaa hapo juu.
+        </li>`;
+        cartTotal.textContent = "0";
+        confirmOrderBtn.disabled = true;
+        return;
+    }
+
+    cartList.innerHTML = cart.map(item => `
+        <li>
+            <div class="item-info">
+                <span><b>${item.icon} ${item.name}</b></span>
+                <small>TZS ${item.price.toLocaleString()} × ${item.qty} ${item.unit} = 
+                    <b style="color:#1b5e20">TZS ${(item.price * item.qty).toLocaleString()}</b></small>
+            </div>
+            <div class="qty-controls">
+                <button class="qty-btn" onclick="changeQty(${item.id}, -1)">−</button>
+                <span class="qty-num">${item.qty}</span>
+                <button class="qty-btn" onclick="changeQty(${item.id}, 1)">+</button>
+                <button class="remove-btn" onclick="removeFromCart(${item.id})">×</button>
+            </div>
+        </li>
+    `).join("");
+
+    const total = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
+    cartTotal.textContent = total.toLocaleString();
+    confirmOrderBtn.disabled = false;
+}
+
+/* ==================== MODAL ==================== */
+function openOrderModal() {
+    if (cart.length === 0) return;
+
+    currentOrderDraft = {
+        id: "NS-" + Date.now().toString().slice(-6),
+        items: [...cart],
+        total: cart.reduce((s, i) => s + i.price * i.qty, 0),
+        date: new Date().toLocaleString("sw-TZ")
+    };
+
+    modalBody.innerHTML = `
+        <div class="modal-summary">
+            <p style="margin-bottom:10px;font-weight:700;color:#1b5e20">
+                <i class="fas fa-receipt"></i> Oda #${currentOrderDraft.id}
+            </p>
+            <ul>
+                ${cart.map(i => `<li><span>${i.icon} ${i.name} × ${i.qty}</span>
+                    <span>TZS ${(i.price*i.qty).toLocaleString()}</span></li>`).join("")}
+            </ul>
+            <p style="margin-top:12px;text-align:right;color:#1b5e20;font-size:16px">
+                <b>Jumla: TZS ${currentOrderDraft.total.toLocaleString()}</b>
+            </p>
+        </div>
+
+        <h4><i class="fas fa-user"></i> Taarifa Zako</h4>
+        <div class="form-group">
+            <label>Jina Lako Kamili <span class="req">*</span></label>
+            <input type="text" id="custName" placeholder="Mfano: Juma Mwinyi">
+        </div>
+        <div class="form-group">
+            <label>Namba ya Simu <span class="req">*</span></label>
+            <input type="tel" id="custPhone" placeholder="Mfano: 0712 345 678">
+        </div>
+        <div class="form-group">
+            <label>Barua Pepe (Email)</label>
+            <input type="email" id="custEmail" placeholder="Mfano: juma@gmail.com">
+        </div>
+
+        <h4><i class="fas fa-map-marker-alt"></i> Location ya Delivery</h4>
+        <div class="form-group">
+            <label>Mtaa / Kijiji <span class="req">*</span></label>
+            <input type="text" id="custStreet" placeholder="Mfano: Mtaa wa Kariakoo">
+        </div>
+        <div class="form-group">
+            <label>Nyumba / Eneo <span class="req">*</span></label>
+            <input type="text" id="custHouse" placeholder="Mfano: Nyumba namba 12">
+        </div>
+        <div class="form-group">
+            <label>Wilaya / Jiji <span class="req">*</span></label>
+            <input type="text" id="custCity" placeholder="Mfano: Ilala, Dar es Salaam">
+        </div>
+        <div class="form-group">
+            <label>Landmark (kitu maarufu karibu)</label>
+            <input type="text" id="custLandmark" placeholder="Mfano: Karibu na KCB Bank">
+        </div>
+
+        <h4><i class="fas fa-clock"></i> Muda wa Delivery</h4>
+        <div class="form-group">
+            <label>Muda Unaotaka Kupokea <span class="req">*</span></label>
+            <select id="custTime">
+                <option value="Haraka iwezekanavyo">Haraka iwezekanavyo</option>
+                <option value="Asubuhi (8:00 - 12:00)">Asubuhi (8:00 - 12:00)</option>
+                <option value="Mchana (12:00 - 16:00)">Mchana (12:00 - 16:00)</option>
+                <option value="Jioni (16:00 - 20:00)">Jioni (16:00 - 20:00)</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Maelezo ya Ziada</label>
+            <textarea id="custNotes" rows="2" placeholder="Mfano: Nipigie nikifika..."></textarea>
+        </div>
+    `;
+
+    orderModal.classList.add("active");
+}
+
+function closeModal() {
+    orderModal.classList.remove("active");
+    currentOrderDraft = null;
+}
+
+/* ==================== SUBMIT ORDER ==================== */
+function submitOrder() {
+    const name     = document.getElementById("custName").value.trim();
+    const phone    = document.getElementById("custPhone").value.trim();
+    const email    = document.getElementById("custEmail").value.trim();
+    const street   = document.getElementById("custStreet").value.trim();
+    const house    = document.getElementById("custHouse").value.trim();
+    const city     = document.getElementById("custCity").value.trim();
+    const landmark = document.getElementById("custLandmark").value.trim();
+    const time     = document.getElementById("custTime").value;
+    const notes    = document.getElementById("custNotes").value.trim();
+
+    if (!name || !phone || !street || !house || !city) {
+        showToast("Tafadhali jaza sehemu zote zenye *", "error");
+        return;
+    }
+
+    const order = {
+        ...currentOrderDraft,
+        customer: { name, phone, email, street, house, city, landmark, notes },
+        deliveryTime: time,
+        status: "pending"
+    };
+
+    orders.unshift(order);
+    saveOrders();
+
+    cart = [];
+    renderCart();
+    renderProducts();
+    renderOrders();
+    updateStats();
+    closeModal();
+
+    showToast("✅ Oda yako imetumwa kwa Admin!", "success");
+}
+
+/* ==================== ADMIN ==================== */
+function renderOrders() {
+    if (orders.length === 0) {
+        ordersList.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-inbox"></i>
+                <h4>Hakuna oda iliyowasili bado</h4>
+                <p>Oda mpya zitaonekana hapa</p>
+            </div>`;
+        return;
+    }
+
+    ordersList.innerHTML = orders.map(o => `
+        <div class="order-card ${o.status === "completed" ? "completed" : ""}">
+            <div class="order-header">
+                <span class="order-id">Oda #${o.id}</span>
+                <span class="order-status">
+                    ${o.status === "completed" ? "✓ Imekamilika" : "⏳ Inasubiri"}
+                </span>
+            </div>
+            <div class="order-meta">
+                <p><i class="fas fa-user"></i> <b>${o.customer.name}</b></p>
+                <p><i class="fas fa-phone"></i> ${o.customer.phone}</p>
+                ${o.customer.email ? `<p><i class="fas fa-envelope"></i> ${o.customer.email}</p>` : ""}
+                <p><i class="fas fa-map-marker-alt"></i> ${o.customer.house}, ${o.customer.street}, ${o.customer.city}</p>
+                ${o.customer.landmark ? `<p><i class="fas fa-flag"></i> Landmark: ${o.customer.landmark}</p>` : ""}
+                <p><i class="fas fa-clock"></i> Muda: ${o.deliveryTime}</p>
+                <p><i class="fas fa-calendar"></i> ${o.date}</p>
+                ${o.customer.notes ? `<p><i class="fas fa-comment"></i> ${o.customer.notes}</p>` : ""}
+            </div>
+            <ul class="order-items">
+                ${o.items.map(i => `
+                    <li><span>${i.icon} ${i.name} × ${i.qty}</span>
+                        <span>TZS ${(i.price*i.qty).toLocaleString()}</span></li>
+                `).join("")}
+            </ul>
+            <div class="order-total">Jumla: TZS ${o.total.toLocaleString()}</div>
+            <div class="actions">
+                ${o.status === "pending"
+                    ? `<button class="btn-deliver" onclick="markDelivered('${o.id}')">
+                        <i class="fas fa-truck"></i> Nimekamilisha Delivery
+                       </button>`
+                    : ""}
+                <button class="btn-delete" onclick="deleteOrder('${o.id}')">
+                    <i class="fas fa-trash"></i> Futa
+                </button>
+            </div>
+        </div>
+    `).join("");
+}
+
+function markDelivered(id) {
+    const order = orders.find(o => o.id === id);
+    if (order) {
+        order.status = "completed";
+        saveOrders();
+        renderOrders();
+        updateStats();
+        showToast("Oda imekamilika ✅", "success");
+    }
+}
+
+function deleteOrder(id) {
+    if (!confirm("Una uhakika unataka kufuta oda hii?")) return;
+    orders = orders.filter(o => o.id !== id);
+    saveOrders();
+    renderOrders();
+    updateStats();
+    showToast("Oda imefutwa", "info");
+}
+
+function updateStats() {
+    document.getElementById("totalOrders").textContent     = orders.length;
+    document.getElementById("pendingOrders").textContent   = orders.filter(o => o.status === "pending").length;
+    document.getElementById("completedOrders").textContent = orders.filter(o => o.status === "completed").length;
+}
+
+/* ==================== ROLE SWITCH ==================== */
+function switchRole() {
+    currentRole = currentRole === "client" ? "admin" : "client";
+
+    if (currentRole === "client") {
+        clientView.classList.add("active");
+        adminView.classList.remove("active");
+        userRoleBadge.textContent = "Mteja";
+        userRoleBadge.classList.remove("admin");
+    } else {
+        adminView.classList.add("active");
+        clientView.classList.remove("active");
+        userRoleBadge.textContent = "Admin";
+        userRoleBadge.classList.add("admin");
+        renderOrders();
+        updateStats();
+    }
+}
+
+/* ==================== HELPERS ==================== */
+function saveOrders() {
+    localStorage.setItem("nitumeOrders", JSON.stringify(orders));
+}
+
+function showToast(message, type = "info") {
+    toast.textContent = message;
+    toast.className = `toast ${type} show`;
+    setTimeout(() => toast.classList.remove("show"), 3000);
+}
+</script>
+</body>
+</html>
